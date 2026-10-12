@@ -1,4 +1,4 @@
-timescale 1ns/1ps
+`timescale 1ns/1ps
 module scene_generator_5ant(input clk,input rst_n,input start,input [1:0] target_sel,input signed [3:0] target_doppler,output pulse_valid,output [2:0] pulse_index,output [159:0] ant_bus,output reg done);
  reg active;reg [2:0] pcount;
  localparam [79:0] SV2_RE={16'h73E2,16'h7922,16'h7CEE,16'h7F3A,16'h7FFF};
