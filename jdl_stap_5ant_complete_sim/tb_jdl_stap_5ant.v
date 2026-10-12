@@ -1,4 +1,4 @@
-timescale 1ns/1ps
+`timescale 1ns/1ps
 module tb_jdl_stap_5ant;
  reg clk,rst_n,start;reg [1:0] target_sel;reg signed [3:0] target_doppler;
  wire scene_valid;wire [2:0] scene_pulse;wire beam_valid;wire ser_valid,ser_ready,ser_last,ser_beam;wire [5:0] fifo_level;
