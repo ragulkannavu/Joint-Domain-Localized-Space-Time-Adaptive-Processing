@@ -139,8 +139,8 @@ module zybo_z7_10_jdl_stap_lcd_top #(
     pmodcls_uart_lcd #(.CLK_HZ(CLK_HZ),.BAUD(9600),.DISPLAY_PERIOD_CYCLES(DISPLAY_PERIOD_CYCLES)) U_LCD (
         .clk(sysclk),.rst_n(rst_n),.tx(pmodcls_tx),.status(lcd_status),
         .actual_angle(actual_angle),.actual_doppler(actual_doppler),
-        .detected(lcd_detected),.detected_angle(detected_angle),.detected_doppler(detected_doppler),
-        .peak_mag(selected_mag),.peak_real(selected_real),.peak_imag(selected_imag)
+        .detected_valid(lcd_detected),.detected_angle(detected_angle),.detected_doppler(detected_doppler),
+        .detected_mag(selected_mag),.detected_real(selected_real),.detected_imag(selected_imag)
     );
     assign led_detected = lcd_detected;
     assign led_done = done;
