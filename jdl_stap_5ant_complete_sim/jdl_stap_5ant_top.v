@@ -1,4 +1,4 @@
-timescale 1ns/1ps
+`timescale 1ns/1ps
 // COMPLETE 5-ANTENNA JDL-STAP PREPROCESSING DEMO
 module jdl_stap_5ant_top #(parameter USE_EXTERNAL_SAMPLES=0, parameter ENABLE_NOISE=0) (
  input clk,input rst_n,input start,input external_valid,input [159:0] external_ant_bus,
