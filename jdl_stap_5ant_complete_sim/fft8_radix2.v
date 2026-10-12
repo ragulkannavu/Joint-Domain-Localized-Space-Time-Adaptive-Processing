@@ -1,4 +1,4 @@
-timescale 1ns/1ps
+`timescale 1ns/1ps
 module fft8_radix2(input clk,input rst_n,input in_valid,output in_ready,input [31:0] in_data,input in_last,input in_beam,
  output out_valid,input out_ready,output signed [19:0] out_real,output signed [19:0] out_imag,output [2:0] out_bin,output out_last,output out_beam,output busy);
  localparam ST_LOAD=3'd0,ST_REORDER=3'd1,ST_STAGE1=3'd2,ST_STAGE2=3'd3,ST_STAGE3=3'd4,ST_OUTPUT=3'd5;
