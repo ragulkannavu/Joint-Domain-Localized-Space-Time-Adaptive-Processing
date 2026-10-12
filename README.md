@@ -1,32 +1,45 @@
 # Joint-Domain Localized Space-Time Adaptive Processing (JDL-STAP)
 
-FPGA-based demonstration of a simplified JDL-STAP radar-processing chain on the **Digilent Zybo Z7-10 (XC7Z010)**, with serial status output to a **Digilent PmodCLS 16×2 LCD**.
+FPGA demonstration of a simplified JDL-STAP radar-processing chain for the **Digilent Zybo Z7-10 (XC7Z010)** with serial output to a **Digilent PmodCLS 16×2 LCD**.
 
-> **Project scope:** This is a digital demonstration using a synthetic scene generator. It is not a complete radar front end: there is no physical RF/ADC input, and the current demo does not estimate physical target range. The display labels **FAR** and **CLOSER** are demonstration classifications, not measured range outputs.
+## Hardware and demonstration
 
-## Features
+- Five-antenna synthetic radar scene generator.
+- Two-beam spatial processing (nominal steering directions 2° and 45°).
+- 8-point radix-2 Doppler FFT and peak detector.
+- PmodCLS UART LCD output at 9600 baud, 8-N-1.
+- Pseudo-random Doppler selection and scenario cycling.
+- Vivado project, constraints, TCL scripts, and simulation testbenches.
 
-- Five-antenna synthetic scene generation.
-- Two-beam processing (steering directions around 2° and 45°).
-- 8-point Doppler FFT and peak selection.
-- UART LCD controller (9600 baud, 8-N-1).
-- Zybo Z7-10 pin constraints, Vivado TCL scripts, and simulation testbenches.
+**Scope:** This is a synthetic digital demo. It has no physical RF/ADC input and does not measure physical target range. The FAR/CLOSER labels are scenario labels, and the Doppler display is an FFT-bin index rather than calibrated velocity. The complex coefficient shown on the LCD is scaled for readability.
 
-## Project setup
+## Repository layout
 
-1. Clone or download this repository.
-2. Open the Vivado Tcl Console and change directory to the repository root.
+- `zybo_z7_10_jdl_stap_lcd_top.v` — hardware top, scheduler, result selection, and LCD interface.
+- `pmodcls_uart_lcd.v` — UART LCD driver.
+- `zybo_z7_10_pmodcls.xdc` — active Zybo Z7-10 constraints.
+- `Zybo-Z7-10_Project_Master.xdc` — reference master constraints.
+- `jdl_stap_5ant_complete_sim/` — processing core, synthetic scene, beamformer, FIFO, FFT, peak detector, and testbench.
+- `create_vivado_project.tcl` — project creation.
+- `run_simulation.tcl` — wrapper simulation helper.
+- `run_full_flow.tcl` — synthesis/implementation/report helper.
+- `verify_vivado_project.tcl`, `power_check.tcl`, `power_safe_report.tcl`, `verify_power_design.tcl` — inspection/reporting helpers.
+
+## Open the project in Vivado
+
+1. Download or clone this repository.
+2. Open the Vivado Tcl Console and change to the repository root.
 3. Run:
 
    ```tcl
    source create_vivado_project.tcl
    ```
 
-The script is intended to create a project named `JDL_STAP_ZyboZ7_PmodCLS` under `vivado_project/`. The intended hardware top is `zybo_z7_10_jdl_stap_lcd_top`; the wrapper simulation top is `tb_zybo_dynamic_demo`.
+The intended project is `JDL_STAP_ZyboZ7_PmodCLS`, targeting `xc7z010clg400-1`. Hardware top: `zybo_z7_10_jdl_stap_lcd_top`. Wrapper testbench: `tb_zybo_dynamic_demo`.
 
-## LCD connection
+Run `source run_simulation.tcl` for the accelerated wrapper simulation. Run `source run_full_flow.tcl` to attempt synthesis, implementation, and report generation. Inspect Vivado messages and reports before programming the board.
 
-For the Pmod JD connection described by the included XDC:
+## PmodCLS wiring
 
 | Zybo Z7-10 | PmodCLS J2 | Purpose |
 |---|---|---|
@@ -34,20 +47,14 @@ For the Pmod JD connection described by the included XDC:
 | JD pin 5 | Pin 5 / GND | Ground |
 | JD pin 6 / 3.3 V | Pin 6 / VCC | Power |
 
-Configure the PmodCLS logical mode bits **MD2/MD1/MD0 = 0/1/0** for 9600-baud UART. Physical jumper polarity may differ by PmodCLS revision; follow the markings/manual for your board. Connect the FPGA signal to PmodCLS RXD, not TXD.
-
-## Demo interpretation
-
-The demo cycles through synthetic target scenarios, updating the scenario approximately every 5 seconds and refreshing the LCD approximately every 3 seconds. Example LCD states include detection status, angle/Doppler information, and a scaled complex FFT coefficient. A deliberately out-of-region 60° scenario can produce `NOT DETECTED`.
-
-An 8-point FFT provides Doppler-bin information; converting bins to physical velocity requires additional radar parameters. The displayed complex coefficient is a scaled display value, not a physical unit.
+Configure the PmodCLS logical mode bits **MD2/MD1/MD0 = 0/1/0** for 9600-baud UART. Physical jumper orientation varies by PmodCLS revision; follow the manual for your specific board. Connect the FPGA TX signal to LCD RXD, not TXD.
 
 ## Power and verification
 
-The RTL uses clock gating to reduce switching activity in the processing datapath. This is not a measured power guarantee. Use Vivado synthesis/implementation reports and suitable switching activity to assess power and timing.
+The design uses a BUFGCE clock gate in the processing datapath. This is intended to reduce switching while idle, but it is not a measured power guarantee. Use the Vivado power report with representative switching activity for an estimate.
 
-**Verification note:** Source files and setup scripts should be checked with your installed Vivado version. Vivado synthesis, timing closure, and physical-board operation have not been independently verified in this environment.
+The author has reported observing the LCD output on the physical board. This repository has been updated through the GitHub API, but a Vivado build, timing closure, and board test were not run by this upload workflow. Verify the final checkout in your Vivado installation before relying on build or power results.
 
 ## License
 
-No license file is included. Add a license before redistributing the project if you intend to permit reuse.
+No license file is included. Add a license if you intend to permit redistribution or reuse.
