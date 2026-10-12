@@ -1,4 +1,4 @@
-timescale 1ns/1ps
+`timescale 1ns/1ps
 module peak_detector(input clk,input rst_n,input fft_valid,input signed [19:0] fft_real,input signed [19:0] fft_imag,input [2:0] fft_bin,input fft_last,input fft_beam,output reg peak_valid,output reg peak_beam,output reg [2:0] peak_bin,output reg [20:0] peak_mag,output reg signed [19:0] peak_real,output reg signed [19:0] peak_imag);
  wire [19:0] abs_r=fft_real[19]?(~fft_real+20'd1):fft_real;
  wire [19:0] abs_i=fft_imag[19]?(~fft_imag+20'd1):fft_imag;
