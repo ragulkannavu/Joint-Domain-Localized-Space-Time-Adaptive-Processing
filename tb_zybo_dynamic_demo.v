@@ -1,4 +1,4 @@
-timescale 1ns/1ps
+`timescale 1ns/1ps
 module tb_zybo_dynamic_demo;
  reg sysclk=0;reg btn_reset=0;wire pmodcls_tx;wire led_detected,led_done;
  zybo_z7_10_jdl_stap_lcd_top #(.CLK_HZ(125_000_000),.STARTUP_CYCLES(20),.TARGET_PERIOD_CYCLES(625_000),.DISPLAY_PERIOD_CYCLES(375_000)) DUT(.sysclk(sysclk),.btn_reset(btn_reset),.pmodcls_tx(pmodcls_tx),.led_detected(led_detected),.led_done(led_done));
