@@ -9,9 +9,9 @@ module pmodcls_uart_lcd #(
 )(
     input wire clk, input wire rst_n, input wire [1:0] status,
     input wire [6:0] actual_angle, input signed [3:0] actual_doppler,
-    input wire detected_valid, input wire [6:0] detected_angle,
-    input signed [3:0] detected_doppler, input signed [19:0] detected_real,
-    input signed [19:0] detected_imag, input wire [20:0] detected_mag,
+    input wire detected, input wire [6:0] detected_angle,
+    input signed [3:0] detected_doppler, input signed [19:0] peak_real,
+    input signed [19:0] peak_imag, input wire [20:0] peak_mag,
     output reg tx
 );
 localparam integer BIT_CLKS=(CLK_HZ+BAUD/2)/BAUD;
@@ -32,7 +32,7 @@ task build_frame;
  integer a,d,da,dd,xr,xi,j;
  begin
   for(j=0;j<32;j=j+1)frame_mem[j]=" ";
-  a=actual_angle;d=actual_doppler;da=detected_angle;dd=detected_doppler;xr=detected_real;xi=detected_imag;
+  a=actual_angle;d=actual_doppler;da=detected_angle;dd=detected_doppler;xr=peak_real;xi=peak_imag;
   case(status)
    0:begin frame_mem[0]="D";frame_mem[1]="E";frame_mem[2]="T";frame_mem[3]="E";frame_mem[4]="C";frame_mem[5]="T";frame_mem[6]="E";frame_mem[7]="D";frame_mem[8]=" ";frame_mem[9]="A";put_angle(da,10);frame_mem[12]=" ";frame_mem[13]="D";put_doppler(dd,14);end
    1:begin frame_mem[0]="N";frame_mem[1]="O";frame_mem[2]="T";frame_mem[3]=" ";frame_mem[4]="D";frame_mem[5]="E";frame_mem[6]="T";frame_mem[7]="E";frame_mem[8]="C";frame_mem[9]="T";frame_mem[10]="E";frame_mem[11]="D";end
@@ -42,7 +42,7 @@ task build_frame;
   if(status==1)begin frame_mem[16]="A";put_angle(a,17);frame_mem[19]=" ";frame_mem[20]="D";frame_mem[21]="-";frame_mem[22]="-";end
   else begin
    frame_mem[16]="X";frame_mem[17]="=";
-   if(detected_valid)begin
+   if(detected)begin
     xr=xr>>>13;xi=xi>>>13;
     if(xr<0)begin frame_mem[18]="-";xr=-xr;end else frame_mem[18]="+";
     if(xr>99)xr=99;frame_mem[19]=48+((xr/10)%10);frame_mem[20]=48+(xr%10);
